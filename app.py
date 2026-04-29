@@ -72,3 +72,46 @@ def setup_db():
 
     conn.commit()
     conn.close()
+
+
+# ================= SEED DATA =================
+def seed_data():
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT COUNT(*) FROM doctors")
+    if cur.fetchone()[0] > 0:
+        conn.close()
+        return
+
+    doctors = [
+        ("Dr Ahmed Ali", "Bone", "01012345678", "Cairo Medical Center"),
+        ("Dr Sara Mohamed", "Bone", "01098765432", "Alex Hospital"),
+        ("Dr Omar Hassan", "Stomach", "01122334455", "Gastro Clinic"),
+        ("Dr Mona Adel", "Stomach", "01155667788", "Delta Hospital"),
+        ("Dr Ali Youssef", "Teeth", "01233445566", "Smile Dental Clinic"),
+        ("Dr Noha Samy", "Teeth", "01299887766", "Bright Dental Center"),
+    ]
+
+    cur.executemany("""
+    INSERT INTO doctors(name, specialty, phone, address)
+    VALUES (?,?,?,?)
+    """, doctors)
+
+    drugs = [
+        ("City Pharmacy", "Panadol Extra", 6),
+        ("City Pharmacy", "Brufen 400", 6),
+        ("City Pharmacy", "Amoxicillin", 6),
+        ("City Pharmacy", "Vitamin C 1000", 6),
+        ("City Pharmacy", "Cough Syrup", 6),
+        ("City Pharmacy", "Antacid Tablets", 6),
+    ]
+
+    cur.executemany("""
+    INSERT INTO pharmacy(name, drug, quantity)
+    VALUES (?,?,?)
+    """, drugs)
+
+    conn.commit()
+    conn.close()
+
