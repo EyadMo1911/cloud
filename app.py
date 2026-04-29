@@ -132,3 +132,12 @@ def login_user(u, p):
     conn.close()
     return user
 
+# ================= DOCTORS =================
+def get_doctors_by_specialty(spec):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT name, phone, address FROM doctors WHERE specialty=?", (spec,))
+    data = cur.fetchall()
+    conn.close()
+    return data
+
