@@ -115,3 +115,20 @@ def seed_data():
     conn.commit()
     conn.close()
 
+# ================= USERS =================
+def register_user(u, p):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO users(username, password) VALUES (?,?)", (u, p))
+    conn.commit()
+    conn.close()
+
+
+def login_user(u, p):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE username=? AND password=?", (u, p))
+    user = cur.fetchone()
+    conn.close()
+    return user
+
