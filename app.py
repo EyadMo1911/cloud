@@ -181,3 +181,49 @@ def get_all_drugs():
     data = cur.fetchall()
     conn.close()
     return data
+
+
+# ================= ORDER DRUG =================
+def order_drug(user_id, drug, qty, type_, address):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT quantity FROM pharmacy WHERE drug=?", (drug,))
+    row = cur.fetchone()
+
+    if not row or row[0] < qty:
+        conn.close()
+        return False
+
+    cur.execute("""
+    UPDATE pharmacy
+    SET quantity = quantity - ?
+    WHERE drug=?
+    """, (qty, drug))
+
+    cur.execute("""
+    INSERT INTO orders(user_id, drug, qty, type, address, status, created_at)
+    VALUES (?,?,?,?,?,?,?)
+    """, (user_id, drug, qty, type_, address, "Pending",
+          datetime.now().strftime("%Y-%m-%d %H:%M")))
+
+    conn.commit()
+    conn.close()
+    return True
+
+
+# ================= MY DRUG ORDERS =================
+def get_my_drug_orders(user_id):
+    conn = connect()
+    cur = conn.cursor()
+
+    cur.execute("""
+    SELECT drug, qty, type, address, status, created_at
+    FROM orders
+    WHERE user_id=?
+    """, (user_id,))
+
+    data = cur.fetchall()
+    conn.close()
+    return data
+
