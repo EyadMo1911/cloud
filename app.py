@@ -173,3 +173,11 @@ def get_my_appointments(user_id):
     conn.close()
     return data
 
+# ================= PHARMACY =================
+def get_all_drugs():
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, drug, quantity FROM pharmacy")
+    data = cur.fetchall()
+    conn.close()
+    return data
