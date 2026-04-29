@@ -141,3 +141,35 @@ def get_doctors_by_specialty(spec):
     conn.close()
     return data
 
+# ================= APPOINTMENTS =================
+def book_appointment(user_id, doctor, date, time):
+    conn = connect()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+        INSERT INTO appointments(user_id, doctor, date, time)
+        VALUES (?,?,?,?)
+        """, (user_id, doctor, date, time))
+
+        conn.commit()
+        conn.close()
+        return True
+
+    except sqlite3.IntegrityError:
+        conn.close()
+        return False
+
+
+def get_my_appointments(user_id):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+    SELECT doctor, date, time
+    FROM appointments
+    WHERE user_id=?
+    """, (user_id,))
+    data = cur.fetchall()
+    conn.close()
+    return data
+
