@@ -227,3 +227,19 @@ def get_my_drug_orders(user_id):
     conn.close()
     return data
 
+# ================= ADMIN =================
+def update_order_status(order_id, status):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("UPDATE orders SET status=? WHERE id=?", (status, order_id))
+    conn.commit()
+    conn.close()
+
+
+def get_all_orders():
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM orders")
+    data = cur.fetchall()
+    conn.close()
+    return data
