@@ -95,4 +95,4 @@ class_labels = {v: k for k, v in class_indices.items()}
 labels_path = os.path.join(BASE_DIR, "class_labels.npy")
 np.save(labels_path, class_labels)
 
-print("Training completed successfully!")
+
