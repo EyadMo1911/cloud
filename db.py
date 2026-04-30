@@ -113,3 +113,62 @@ def seed_data():
 
     conn.commit()
     conn.close()
+
+
+# ================= USERS =================
+def register_user(u, p):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO users(username, password) VALUES (?,?)", (u, p))
+    conn.commit()
+    conn.close()
+
+
+def login_user(u, p):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE username=? AND password=?", (u, p))
+    user = cur.fetchone()
+    conn.close()
+    return user
+
+# ================= DOCTORS =================
+def get_doctors_by_specialty(spec):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("SELECT name, phone, address FROM doctors WHERE specialty=?", (spec,))
+    data = cur.fetchall()
+    conn.close()
+    return data
+
+# ================= APPOINTMENTS =================
+def book_appointment(user_id, doctor, date, time):
+    conn = connect()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("""
+        INSERT INTO appointments(user_id, doctor, date, time)
+        VALUES (?,?,?,?)
+        """, (user_id, doctor, date, time))
+
+        conn.commit()
+        conn.close()
+        return True
+
+    except sqlite3.IntegrityError:
+        conn.close()
+        return False
+
+
+def get_my_appointments(user_id):
+    conn = connect()
+    cur = conn.cursor()
+    cur.execute("""
+    SELECT doctor, date, time
+    FROM appointments
+    WHERE user_id=?
+    """, (user_id,))
+    data = cur.fetchall()
+    conn.close()
+    return data
